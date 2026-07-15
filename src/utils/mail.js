@@ -30,6 +30,14 @@ const sendEmail = async (options) => {
     html: emailHtml,
   };
 
+  try {
+    await transporter.sendEmail(mail);
+  } catch (error) {
+    console.error(
+      "email service failed silently. Make sure that you have provided all the credentials in the .env file",
+    );
+    console.error("Error ", error);
+  }
 };
 
 const emailVerificationMailgenContent = (username, verificationUrl) => {
