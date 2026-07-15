@@ -21,6 +21,15 @@ const sendEmail = async (options) => {
       pass: process.env.MAILTRAP_SMTP_PASS,
     },
   });
+
+  const mail = {
+    from: "mail.taskmanager@example.com",
+    to: options.email,
+    subject: options.subject,
+    text: emailTextual,
+    html: emailHtml,
+  };
+
 };
 
 const emailVerificationMailgenContent = (username, verificationUrl) => {
