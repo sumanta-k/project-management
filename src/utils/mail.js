@@ -1,4 +1,5 @@
 import Mailgen from "mailgen";
+import nodemailer from "nodemailer";
 
 const emailVerificationMailgenContent = (username, verificationUrl) => {
   return {
