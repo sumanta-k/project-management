@@ -9,6 +9,8 @@ const sendEmail = async (options) => {
       link: "https://taskmanagelink.com",
     },
   });
+
+  const emailTextual = mailGenerator.generatePlaintext(options.mailgenContent);
 };
 
 const emailVerificationMailgenContent = (username, verificationUrl) => {
