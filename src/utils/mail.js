@@ -1,6 +1,16 @@
 import Mailgen from "mailgen";
 import nodemailer from "nodemailer";
 
+const sendEmail = async (options) => {
+  const mailGenerator = new Mailgen({
+    theme: "default",
+    product: {
+      name: "Task Manager",
+      link: "https://taskmanagelink.com",
+    },
+  });
+};
+
 const emailVerificationMailgenContent = (username, verificationUrl) => {
   return {
     body: {
