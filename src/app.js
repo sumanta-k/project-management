@@ -18,10 +18,12 @@ app.use(
 );
 // import routes below
 import healthCheckRouter from "./routes/healthcheck.routes.js";
+import authRouter from "./routes/auth.routes.js";
 /*
   INFO: meaning that anything which will come after "/api/v1/healthcheck"  will be sent to 'healthCheckRouter'
 */
 app.use("/api/v1/healthcheck", healthCheckRouter);
+app.use("/api/v1/auth", healthCheckRouter);
 
 app.get("/", (req, res) => {
   res.send("Welcome to base campy");
