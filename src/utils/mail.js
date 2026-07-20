@@ -31,7 +31,7 @@ const sendEmail = async (options) => {
   };
 
   try {
-    await transporter.sendEmail(mail);
+    await transporter.sendMail(mail);
   } catch (error) {
     console.error(
       "email service failed silently. Make sure that you have provided all the credentials in the .env file",
