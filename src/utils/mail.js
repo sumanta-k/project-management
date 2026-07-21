@@ -56,14 +56,15 @@ const emailVerificationMailgenContent = (username, verificationUrl) => {
       },
       outro:
         "Need help, or have question ? just reply to this email, we would love to help",
-    }
+    },
   };
+};
 
-  const forgotPasswordMailgenContent = (username, passwordResetUrl) => {
-    return {
-      body: {
-        name: username,
-        intro: "we got a request to reset the password for your account",
+const forgotPasswordMailgenContent = (username, passwordResetUrl) => {
+  return {
+    body: {
+      name: username,
+      intro: "we got a request to reset the password for your account",
       action: {
         instructions:
           "To reset your password click on the following button or link",
@@ -75,8 +76,8 @@ const emailVerificationMailgenContent = (username, verificationUrl) => {
       },
       outro:
         "Need help, or have question ? just reply to this email, we would love to help",
-    }
-  
+    },
+  };
 };
 
 export {
