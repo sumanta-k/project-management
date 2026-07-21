@@ -45,19 +45,19 @@ const emailVerificationMailgenContent = (username, verificationUrl) => {
     body: {
       name: username,
       intro: "welcome to our app! we're exited to have you on board",
-    },
-    action: {
-      instructions: "To verify your email, please click the button",
-      button: {
-        color: "#22BC06",
-        text: "verify your email",
-        link: verificationUrl,
+
+      action: {
+        instructions: "To verify your email, please click the button",
+        button: {
+          color: "#22BC06",
+          text: "verify your email",
+          link: verificationUrl,
+        },
       },
-    },
-    outro:
-      "Need help, or have question ? just reply to this email, we would love to help",
+      outro:
+        "Need help, or have question ? just reply to this email, we would love to help",
+    }
   };
-};
 
 const forgotPasswordMailgenContent = (username, passwordResetUrl) => {
   return {
