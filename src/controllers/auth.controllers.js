@@ -3,6 +3,8 @@ import { ApiResponse } from "../utils/api-response.js";
 import { ApiError } from "../utils/api-error.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { sendEmail, emailVerificationMailgenContent } from "../utils/mail.js";
+import crypto from "node:crypto";
+import jwt from "jsonwebtoken";
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -201,4 +203,46 @@ const verifyEmail = asyncHandler(async (req, res) => {
 });
 
 // let's assume user couldn't verify his email with-in 20 mins , so user is now asking for resending email-verification, so that it could be verify
-export { registerUser, login, logoutUser, getCurrentUser, verifyEmail };
+const resendEmailVerification = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user?._id);
+
+  if (!user) {
+    throw new ApiError(404, "User does not exist");
+  }
+
+  // what if user is verified and again asking for resend-email-verification
+  if (user.isEmailVerified) {
+    throw new ApiError(409, "Email is already verified");
+  }
+
+  // Now if user is not verified then create it's all the token and assign it and after assigning it send email to user
+  const { unHashedToken, hashedToken, tokenExpiry } =
+    user.generateTemporaryToken();
+
+  user.emailVerificationToken = hashedToken;
+  user.emailVerificationExpiry = tokenExpiry;
+
+  await user.save({ validateBeforeSave: false });
+
+  await sendEmail({
+    email: user?.email,
+    subject: "Please verify your email",
+    mailgenContent: emailVerificationMailgenContent(
+      user.username,
+      `${req.protocol}://${req.get("host")}/api/v1/users/verify-email/${unHashedToken}`,
+    ),
+  });
+
+  // our part is done , now we can send status to user
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "mail has been sent to email"));
+});
+export {
+  registerUser,
+  login,
+  logoutUser,
+  getCurrentUser,
+  verifyEmail,
+  resendEmailVerification,
+};
