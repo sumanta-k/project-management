@@ -238,6 +238,56 @@ const resendEmailVerification = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, {}, "mail has been sent to email"));
 });
+
+const refreshAccessToken = asyncHandler(async (req, res) => {
+  const incomingRefreshToken =
+    req.cookies.refreshToken || req.body.refreshToken;
+
+  if (!incomingRefreshToken) {
+    throw new ApiError(401, "Unauthorized Access");
+  }
+  try {
+    const decodedToken = jwt.verify(
+      incomingRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+    );
+    const user = await User.findById(decodedToken?._id);
+    if (!user) {
+      throw new ApiError(401, "Invalid refresh token");
+    }
+
+    if (incomingRefreshToken != user?.refreshToken) {
+      throw new ApiError(401, " refresh token is expired");
+    }
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+    // generate new tokens now
+    const { accessToken, refreshToken: newRefreshToken } =
+      await generateAccessAndRefreshTokens(user._id);
+
+    // Now update the refresh token which is inside the db, cause after creating the refresh token , if we are sending this to user ,then for further inquery it should be in the db also , so that user could talk with the server and can do it's work
+    user.refreshToken = newRefreshToken;
+
+    await user.save();
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", newRefreshToken, options)
+      .json(
+        new ApiResponse(
+          200,
+          { accessToken, refreshToken: newRefreshToken },
+          "Access Token refreshed",
+        ),
+      );
+  } catch (error) {
+    throw new ApiError(401, "Invalid refresh token");
+  }
+});
+
 export {
   registerUser,
   login,
@@ -245,4 +295,5 @@ export {
   getCurrentUser,
   verifyEmail,
   resendEmailVerification,
+  refreshAccessToken,
 };
